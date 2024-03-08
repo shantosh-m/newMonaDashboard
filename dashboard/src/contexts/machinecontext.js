@@ -42,7 +42,7 @@ export const MachineProvider = ({ children }) => {
       setMachineData(state => {
         return state.map(machine => {
           if (machine.moldProtector == updatedMessages.protector_id){
-            console.log("thanujan", updatedMessages.data.success)
+            console.log("success or fail", updatedMessages.data.success)
             if (updatedMessages.data.success == 1)
               return {...machine, moldShots : machine.moldShots + 1  }
             else (updatedMessages.data.success == 0)
@@ -70,7 +70,7 @@ export const MachineProvider = ({ children }) => {
       
 
 
-      console.log(updatedMessages, "thanujan")
+      console.log(updatedMessages, "up-msg")
 
      
 
