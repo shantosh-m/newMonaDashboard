@@ -28,7 +28,10 @@ export const MachineList = () => {
             justifyContent: "center",
           }}
         >
-          <TimeGrid />
+          <Grid style={{ marginTop: "33px" }}>
+            <TimeGrid />
+          </Grid>
+
           {machineData.map((machine, index) => (
             <Grid
               item
