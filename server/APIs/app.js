@@ -2,6 +2,8 @@ const express = require("express");
 const { createServer } = require("http"); // Import only createServer from "http"
 const { Server } = require("socket.io"); // Import Server from "socket.io"
 const cors = require("cors"); // Import CORS middleware
+const connectToDatabase = require("../DataBaseConnection/dbConfig");
+connectToDatabase();
 const Machine = require("../Models/machineModel");
 
 const app = express();
@@ -19,54 +21,75 @@ io.on("connection", (socket) => {
   console.log("Client connected!");
 
   socket.on("protector", (msg) => {
-    console.log(
-      `Message received from  ${msg.protector_id}: `
-    );
+    console.log(`Message received from  ${msg.protector_id}: `);
     console.log(msg.data);
     console.log(msg.type);
+    // console.log(`Message received from ${msg.protector_id} ${msg.type}`);
 
-   
+    // if msg.type == "init":
+    //     # check the database whether it has the same data.
 
-    if (msg.type == "run" || msg.type == "status")
+    // Define a schema for your collection
+    // const machineSchema = new mongoose.Schema({
+    //     _id: String,
+    //     machineID: Number,
+    //     moldMaker: "String",
+    //     moldMaterial: String,
+    //     moldProtector: String,
+    //     monaNumber: String,
+    //   })
+
+    // console.log(
+    //   `Failed shots received from Protector ${msg.protector_id}: ${msg.failed_shots}`
+    // );
+
+    // Store the message for the protector
+    // if (!protectorMessages[msg.protector_id]) {
+    //   protectorMessages[msg.protector_id] = ;
+    // }
+    // protectorMessages[msg.protector_id].push({
+    //   total_shots: msg.total_shots,
+    //   failed_shots: msg.failed_shots,
+    // });
+
+    // Emit the updated messages to all clients
+
+    if (msg.type === "run") {
       io.emit("updated_protector_messages", msg);
-
-    // write to database and all
-    const updateToDB = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3001/updateOrInsert/${msg.protector_id}/:${msg.success}`
-        );
-        // Log the data received from the backend API
-        console.log("API Response:", response.data);
-      } catch (error) {
-        console.error("Error fetching machine data:", error);
-      }
-    };
-
-    updateToDB();
+      update_insert_valid(msg.protector_id, msg.data.success);
+    } else if (msg.type === "status") {
+      io.emit("updated_protector_messages", msg);
+      machineStatusChanging(msg.protector_id, msg.data.status);
+    } else if (msg.type === "init") {
+    } else {
+      console.error("There is error occured");
+    }
   });
 });
 
 // Function to update or insert into MongoDB
-async function updateOrInsert(machineID, success) {
+async function updateOrInsert(moldProtector, success) {
   try {
-    const existingDocument = await Machine.findOne({ machineID });
+    const existingDocument = await Machine.findOne({ moldProtector });
 
     if (existingDocument) {
       if (success) {
-        await Machine.updateOne({ machineID }, { $inc: { moldShots: 1 } });
-        console.log(`Updated moldShots for machine ${machineID}`);
+        await Machine.updateOne({ moldProtector }, { $inc: { moldShots: 1 } });
+        console.log(`Updated moldShots for machine ${moldProtector}`);
       } else {
-        await Machine.updateOne({ machineID }, { $inc: { failedShots: 1 } });
-        console.log(`Updated failedShots for machine ${machineID}`);
+        await Machine.updateOne(
+          { moldProtector },
+          { $inc: { failedShots: 1 } }
+        );
+        console.log(`Updated failedShots for machine ${moldProtector}`);
       }
     } else {
       if (success) {
-        await Machine.create({ machineID, moldShots: 1 });
-        console.log(`With moldShot = 1 machine ${machineID} created`);
+        await Machine.create({ moldProtector, moldShots: 1 });
+        console.log(`With moldShot = 1 machine ${moldProtector} created`);
       } else {
-        await Machine.create({ machineID, failedShots: 1 });
-        console.log(`With failedShot = 1 machine ${machineID} created`);
+        await Machine.create({ moldProtector, failedShots: 1 });
+        console.log(`With failedShot = 1 machine ${moldProtector} created`);
       }
     }
   } catch (error) {
@@ -74,27 +97,29 @@ async function updateOrInsert(machineID, success) {
   }
 }
 
-// API endpoint to handle the update or insert
-app.put("/updateOrInsert/:machineID/:success", async (req, res) => {
-  const machineID = parseInt(req.params.machineID);
-  const success = parseInt(req.params.success);
-  console.log(machineID);
-  if (!isNaN(machineID) && machineID > 0) {
-    if (!isNaN(success) && (success == 0 || success == 1)) {
-      await updateOrInsert(machineID, success);
-      res.send(`Updated or inserted for machine ${machineID}`);
-    } else {
-      res.status(400).send("Invalid success code");
-    }
+async function update_insert_valid(moldProtector, success) {
+  console.log(moldProtector, success);
+  if (!isNaN(success) && (success == 0 || success == 1)) {
+    await updateOrInsert(moldProtector, success);
   } else {
-    res.status(400).send("Invalid machine number");
+    console.log("Invalid success code");
   }
-});
+}
 
-// Serve the dashboard HTML
-// app.get("/", (req, res) => {
-//     res.sendFile(__dirname + "/dashboard.html");
-// });
+async function machineStatusChanging(moldProtector, machineDataStatus) {
+  try {
+    const existingDocument = await Machine.findOne({ moldProtector });
+
+    if (existingDocument) {
+      await Machine.updateOne({ moldProtector }, { status: machineDataStatus });
+      console.log(
+        `Machine status changing for ${moldProtector} to  ${machineDataStatus}`
+      );
+    }
+  } catch (error) {
+    console.error("Error on changing status:", error);
+  }
+}
 
 httpServer.listen(3001, () => {
   console.log("Server started on port 3001");
