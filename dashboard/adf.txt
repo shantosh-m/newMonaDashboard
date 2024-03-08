@@ -1,0 +1,12 @@
+>>> from segment_anything.modeling import sam
+>>> from segment_anything.modeling.sam import Sam
+>>> sam = Sam()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: Sam.__init__() missing 3 required positional arguments: 'image_encoder', 'prompt_encoder', and 'mask_decoder'
+>>> model = torch.load("sam_vit_h_4b8939.pth")
+KeyboardInterrupt
+>>> from segment_anything.build_sam import build_sam_vit_h
+>>> sam = build_sam_vit_h("sam_vit_h_4b8939.pth")
+>>> for name, layer in sam.named_modules():
+

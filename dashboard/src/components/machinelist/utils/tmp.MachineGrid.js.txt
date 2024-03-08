@@ -1,0 +1,266 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+import {
+  Card,
+  CardContent,
+  Grid,
+  Chip,
+  Typography,
+  rgbToHex,
+} from "@mui/material";
+import PropTypes from "prop-types";
+import { MachineWithNumber } from "./machineIcon";
+import { useMachineContext } from "../../../contexts/machinecontext";
+
+export const MachineGrid = ({ ID }) => {
+  const { machineData } = useMachineContext();
+
+  // Find the machine with the given machineID from machineData
+  const machine = machineData.find((machine) => machine.machineID === ID);
+
+  if (!machine) {
+    // Handle the case where the machine with the specified ID is not found
+    return <div>{ID}</div>;
+  }
+
+  const {
+    machineID,
+    moldId,
+    monaNumber,
+    status,
+    moldShots,
+    failedShots,
+    prodRate,
+    prod_startDate,
+    prod_startTime,
+    prod_endDate,
+    prod_endTime,
+    material,
+    moldMaker,
+    ...others
+  } = machine;
+  return (
+    <Card
+      variant="outlined"
+      xs={12}
+      sx={{
+        margin: 0,
+        padding: 0,
+        borderWidth: 3,
+        width: 300,
+        height: 250,
+        // backgroundColor: "rgba(255, 0, 0)",
+      }}
+      center
+    >
+      <CardContent
+        alignItems="center"
+        justifyContent="center"
+        sx={{
+          margin: 0,
+          padding: 0,
+          backgroundColor: "rgba(255, 50, 0)",
+        }}
+      >
+        <Grid
+          container
+          sx={{
+            margin: 0,
+            padding: 0,
+            backgroundColor: "rgba(40, 50, 0)",
+          }}
+        >
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="center"
+            xs={6}
+            sx={{ backgroundColor: "yellow" }}
+          >
+            <Grid
+              container
+              alignItems="end"
+              justifyContent="center"
+              sx={{
+                alignItems: "center",
+                justifyContent: "center",
+                display: "flux",
+                backgroundColor: "black",
+              }}
+            >
+              {/* <Typography
+                variant="h6"
+                padding={1}
+                paddingTop={1}
+                color="textSecondary"
+              > */}
+
+              <Grid
+                item
+                xs={12}
+                // sx={{ top: "5em", backgroundColor: "yellow" }}
+                sx={{ backgroundColor: "white" }}
+              >
+                <Typography
+                  variant="h7"
+                  component="div"
+                  textAlign="left"
+                  color="black"
+                >
+                  <MachineWithNumber count={machineID} />
+                </Typography>
+              </Grid>
+
+              <Grid
+                item
+                xs={12}
+                // sx={{ top: "5em", backgroundColor: "yellow" }}
+                sx={{ backgroundColor: "white" }}
+              >
+                <Typography
+                  variant="h7"
+                  component="div"
+                  textAlign="left"
+                  color="black"
+                >
+                  <MachineWithNumber count={machineID} />
+                </Typography>
+              </Grid>
+
+              <Grid
+                item
+                // sx={{
+                //   top: "5em",
+                // }}
+                xs={12}
+                sx={{ backgroundColor: "yellow" }}
+              >
+                <Typography
+                  variant="h7"
+                  component="div"
+                  textAlign="left"
+                  color="black"
+                  marginTop={5}
+                >
+                  <Chip label={material} color="info" />
+                </Typography>
+              </Grid>
+              {/* </Typography> */}
+            </Grid>
+          </Grid>
+          <Grid container xs={6}>
+            <Grid
+              item
+              textAlign="center"
+              xs={12}
+              margin={0}
+              padding={1}
+              sx={{ backgroundColor: "pink" }}
+            >
+              asdfasdf
+            </Grid>
+            {/* <Grid item textAlign="center" xs={12} padding={1}> */}
+            <Grid
+              container
+              alignItems="center"
+              justifyContent={"end"}
+              // spacing={2}
+            >
+              <Grid item xs={12} sx={{ backgroundColor: "black" }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  textAlign="left"
+                  color="black"
+                >
+                  {moldId}asdf
+                </Typography>
+              </Grid>
+              <Grid item xs={12} sx={{ backgroundColor: "white" }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  textAlign="left"
+                  color="black"
+                >
+                  {monaNumber}
+                </Typography>
+              </Grid>
+            </Grid>
+            {/* </Grid> */}
+
+            {/* mold deltails */}
+            <Grid item textAlign="center" xs={12} margin={0} padding={1}>
+              <Grid
+                container
+                alignItems="center"
+                justifyContent={"end"}
+                spacing={2}
+              >
+                <Grid item>
+                  <Typography
+                    variant="h6"
+                    component="div"
+                    textAlign="left"
+                    color="black"
+                  >
+                    <Chip label={moldMaker} color="primary" />
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+
+        {/* statistics */}
+        <Grid item xs={12} margin={0}>
+          <Grid
+            container
+            direction="row"
+            justifyContent={"space-between"}
+            alignItems="center"
+          >
+            <Grid
+              item
+              xs={6}
+              padding={1}
+              justifyContent="center"
+              alignItems="center"
+              sx={{ backgroundColor: "success.main" }}
+            >
+              <Typography
+                variant="h6"
+                component="div"
+                textAlign="center"
+                color="white"
+              >
+                {moldShots}
+              </Typography>
+            </Grid>
+            <Grid
+              item
+              xs={6}
+              padding={1}
+              justifyContent="center"
+              alignItems="center"
+              sx={{ backgroundColor: "error.main" }}
+            >
+              <Typography
+                variant="h6"
+                component="div"
+                textAlign="center"
+                color="white"
+              >
+                {failedShots}
+              </Typography>
+            </Grid>
+          </Grid>
+        </Grid>
+      </CardContent>
+    </Card>
+  );
+};
+
+MachineGrid.propTypes = {
+  machineID: PropTypes.string.isRequired,
+};

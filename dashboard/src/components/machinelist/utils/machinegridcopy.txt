@@ -1,0 +1,54 @@
+import "./tab.css";
+import { Card, Grid } from "@mui/material";
+export const MachineGrid = () => (
+  <>
+    <Card
+      variant="outlined"
+      xs={12}
+      sx={{
+        margin: 0,
+        padding: 0,
+        borderWidth: 3,
+        width: 300,
+        height: 250,
+        // backgroundColor: "rgba(255, 0, 0)",
+      }}
+      center
+    >
+      {/* .tab_body {
+  width: 289px;
+  height: 169px;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 17px;
+  position: absolute;
+  left: 0;
+  top: 21px;
+} */}
+      <Grid
+        container
+        alignItems={"center"}
+        justifyContent={"center"}
+        position={"relative"}
+        zIndex={1}
+        sx={{ backgroundColor: "red", width: "290px", height: "190px" }}
+      >
+        <Grid item xs={12} top={"0px"}>
+          <div className="header-box">
+            <span>Header</span>
+            <img src="././headerfill-vector.svg" alt="Header SVG" />
+          </div>
+        </Grid>
+        <Grid item xs={12} backgroundColor="white" zIndex={9} top="30px">
+          <div className="machine_no_box">12</div>
+          <div className="mold_company">ALEX</div>
+          <div className="mold_material">HIPS</div>
+          <div className="total_shots">23</div>
+          <div className="failed_shots">2</div>
+        </Grid>
+
+        {/* </div> */}
+      </Grid>
+    </Card>
+  </>
+);

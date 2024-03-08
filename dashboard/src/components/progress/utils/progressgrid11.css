@@ -1,0 +1,199 @@
+.working_machine1 {
+  --width: 215px;
+  --height: 124px;
+
+  /* Add any additional styling you need for the container */
+}
+
+.tab_full_background {
+  width: var(--width);
+  height: var(--height);
+  min-width: var(--width);
+  min-height: var(--height);
+  max-width: var(--width);
+  max-height: var(--height);
+  border-radius: 8%;
+  /* background-color: #b5b5b5; */
+  background-color: #b5b5b5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.25);
+  position: relative;
+  /* Use relative positioning for this container */
+}
+
+.header-box {
+  width: 100px;
+  height: 122px;
+  /* background: #3e8bff; */
+  background: #3e8bff;
+  border-radius: 8%;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  position: absolute;
+  color: #ffffff;
+  left: 0;
+  top: 0;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica,
+    Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-style: normal;
+  font-weight: 600;
+  font-size: 0.8em;
+  line-height: 15px;
+}
+
+.header-box > span {
+  top: 1px;
+  position: absolute;
+  left: 10%;
+  font-size: 13px;
+}
+
+.header-box img {
+  width: 90px;
+  height: 51px;
+  position: absolute;
+  left: 80px;
+  top: 0;
+  border-radius: 4px;
+}
+
+.tab_bodyprogress {
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 16px;
+  position: absolute;
+  left: 0;
+  top: 14%;
+}
+
+.progressbar {
+  position: relative;
+  overflow: hidden;
+  width: 110%;
+  height: 15px;
+  border-radius: 8px;
+  background-color: #d9d9d9;
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.25);
+}
+
+.progressPercent {
+  font-weight: 600;
+  font-family: "Franklin Gothic Medium";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #eee;
+  text-shadow: -1px 0 #555, 0 1px #555, 1px 0 #555, 0 -1px #555;
+}
+
+.progressbar_margin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  bottom: 15px; /* Adjust the bottom position as needed */
+  left: 50%;
+  width: 80%;
+  max-width: 100%;
+  min-width: 30%;
+  transform: translateX(-50%);
+}
+
+.graph_margin canvas {
+  padding-top: 2%;
+  padding-bottom: 0px;
+  height: 100%;
+  width: 100%;
+}
+
+.graph_margin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 48%; /* Adjust the width based on your design */
+  height: 50%;
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  padding: 5px;
+  margin-top: 4%;
+  margin-left: 4%;
+}
+
+.last_hour_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48%; /* Adjust the width based on your design */
+  margin-left: 10px; /* Adjust the margin based on your design */
+  background-color: #ffffff;
+  border: 1px solid #d9d9d9;
+  box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  padding: 5px;
+  margin-top: 4%;
+  margin-right: 4%;
+  height: 50%;
+}
+
+.last_hour_rate span {
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: 500; /* Adjust the font weight as needed */
+  font-size: 1.9em; /* Adjust the font size as needed */
+  color: #000000; /* Adjust the color as needed */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center;
+  align-items: center;
+}
+
+.target span {
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: normal;
+  font-weight: bold; /* Adjust the font weight as needed */
+  font-size: 0.7em; /* Adjust the font size as needed */
+  color: #000000; /* Adjust the color as needed */
+  display: flex; /* Use flexbox for centering */
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.graph_last_hour {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+.last_hour_rate {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  top: -30px; /* Adjust the distance from the text */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #dbdbdb;
+  color: #000000;
+  padding: 5px;
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  width: 95px;
+}
+
+.last_hour_rate:hover .tooltip {
+  opacity: 1;
+}
