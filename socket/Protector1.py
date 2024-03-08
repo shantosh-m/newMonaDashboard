@@ -33,26 +33,42 @@ protector_id = "Protector1"  # Unique identifier for the machine
 
 # config load-->  run
 
-# Sending data along with machine_id
-sio.emit('protector', {'protector_id': protector_id, 'type': "init", 'data' : {}})
+# Sending data along with machine_id for the init type
+sio.emit('protector', {
+  'protector_id': protector_id,
+  'type': "init",
+  'data': {
+    'machineID': 1,
+    'moldMaker': "Maker1",
+    'moldMaterial': "GPPS",
+    'moldProtector': protector_id,
+    'monaNumber': "M#123"
+  }
+})
 time.sleep(2)
 
+# Sending data along with machine_id for the run type
 
 while True:
-    success = random.choice([True, False])
+    success = random.choice([1,0])
     # Sending data along with machine_id
     sio.emit('protector', {'protector_id': protector_id, 'type': "run", "data": { 'success': success}})
-    time.sleep(2)
+    if(success == 0):
+        sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "stuck"} })
+        time.sleep(10)
+
+        sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "working" }})       
+        
+    
+    time.sleep(5)
 
 
-# red light
-success = random.choice([True, False])
-# Sending data along with machine_id
-sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "stuck"} })
+# # red light
+# success = random.choice([True, False])
+# # Sending data along with machine_id
          
-# green  button
-sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "working" }})       
-time.sleep(2)
+# # green  button
+# time.sleep(2)
 
 
 
