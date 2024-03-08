@@ -2,6 +2,8 @@ const express = require("express");
 const { createServer } = require("http"); // Import only createServer from "http"
 const { Server } = require("socket.io"); // Import Server from "socket.io"
 const cors = require("cors"); // Import CORS middleware
+const connectToDatabase = require("../DataBaseConnection/dbConfig");
+connectToDatabase();
 const Machine = require("../Models/machineModel");
 
 const app = express();
@@ -75,16 +77,21 @@ async function updateOrInsert(machineID, success) {
     const existingDocument = await Machine.findOne({ machineID });
 
     if (existingDocument) {
-      if (success)
+      if (success) {
         await Machine.updateOne({ machineID }, { $inc: { moldShots: 1 } });
-      else await Machine.updateOne({ machineID }, { $inc: { failedShots: 1 } });
-
-      console.log(`Updated moldShots for machine ${machineID}`);
+        console.log(`Updated moldShots for machine ${machineID}`);
+      } else {
+        await Machine.updateOne({ machineID }, { $inc: { failedShots: 1 } });
+        console.log(`Updated failedShots for machine ${machineID}`);
+      }
     } else {
-      if (success) await Machine.create({ machineID, moldShots: 1 });
-      else await Machine.create({ machineID, failedShots: 1 });
-
-      console.log(`Inserted new document for machine ${machineID}`);
+      if (success) {
+        await Machine.create({ machineID, moldShots: 1 });
+        console.log(`With moldShot = 1 machine ${machineID} created`);
+      } else {
+        await Machine.create({ machineID, failedShots: 1 });
+        console.log(`With failedShot = 1 machine ${machineID} created`);
+      }
     }
   } catch (error) {
     console.error("Error updating or inserting:", error);
@@ -101,7 +108,7 @@ app.put("/updateOrInsert/:machineID/:success", async (req, res) => {
       await updateOrInsert(machineID, success);
       res.send(`Updated or inserted for machine ${machineID}`);
     } else {
-      res.status(400).send("Invalid machine number");
+      res.status(400).send("Invalid success code");
     }
   } else {
     res.status(400).send("Invalid machine number");
