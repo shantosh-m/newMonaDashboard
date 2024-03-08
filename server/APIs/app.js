@@ -2,8 +2,6 @@ const express = require("express");
 const { createServer } = require("http"); // Import only createServer from "http"
 const { Server } = require("socket.io"); // Import Server from "socket.io"
 const cors = require("cors"); // Import CORS middleware
-const connectToDatabase = require("../DataBaseConnection/dbConfig");
-connectToDatabase();
 const Machine = require("../Models/machineModel");
 
 const app = express();
@@ -22,8 +20,10 @@ io.on("connection", (socket) => {
 
   socket.on("protector", (msg) => {
     console.log(
-      `Message received from Protector ${msg.protector_id}: ${msg.success}`
+      `Message received from  ${msg.protector_id}: `
     );
+    console.log(msg.data);
+    console.log(msg.type);
 
     // if msg.type == "init":
     //     # check the database whether it has the same data.
@@ -52,7 +52,9 @@ io.on("connection", (socket) => {
     // });
 
     // Emit the updated messages to all clients
-    io.emit("updated_protector_messages", protectorMessages);
+
+    if (msg.type == "run" || msg.type == "status")
+      io.emit("updated_protector_messages", msg);
 
     // write to database and all
     const updateToDB = async () => {
