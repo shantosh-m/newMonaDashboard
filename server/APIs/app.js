@@ -25,33 +25,7 @@ io.on("connection", (socket) => {
     console.log(msg.data);
     console.log(msg.type);
 
-    // if msg.type == "init":
-    //     # check the database whether it has the same data.
-
-    // Define a schema for your collection
-    // const machineSchema = new mongoose.Schema({
-    //     _id: String,
-    //     machineID: Number,
-    //     moldMaker: "String",
-    //     moldMaterial: String,
-    //     moldProtector: String,
-    //     monaNumber: String,
-    //   })
-
-    // console.log(
-    //   `Failed shots received from Protector ${msg.protector_id}: ${msg.failed_shots}`
-    // );
-
-    // Store the message for the protector
-    // if (!protectorMessages[msg.protector_id]) {
-    //   protectorMessages[msg.protector_id] = ;
-    // }
-    // protectorMessages[msg.protector_id].push({
-    //   total_shots: msg.total_shots,
-    //   failed_shots: msg.failed_shots,
-    // });
-
-    // Emit the updated messages to all clients
+   
 
     if (msg.type == "run" || msg.type == "status")
       io.emit("updated_protector_messages", msg);
