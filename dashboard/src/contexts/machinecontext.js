@@ -57,7 +57,7 @@ export const MachineProvider = ({ children }) => {
       setMachineData(state => {
         return state.map(machine => {
           if (machine.moldProtector == updatedMessages.protector_id){
-            if(updatedMessages.data.status == "working" || updatedMessages.data.status == "stuck" || updatedMessages.data.status == "error" )
+            if(updatedMessages.data.status == "working" || updatedMessages.data.status == "stuck" || updatedMessages.data.status == "error"|| updatedMessages.data.status == "notWorking" )
               return {...machine,  status : updatedMessages.data.status}
             else 
               return machine 
@@ -71,6 +71,7 @@ export const MachineProvider = ({ children }) => {
 
 
       console.log(updatedMessages, "up-msg")
+      console.log(updatedMessages.data, "status")
 
      
 
