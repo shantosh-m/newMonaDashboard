@@ -48,21 +48,24 @@ sio.emit('protector', {
 time.sleep(2)
 
 # Sending data along with machine_id for the run type
-
 while True:
-    success = random.choice([1,0])
-    # Sending data along with machine_id
-    sio.emit('protector', {'protector_id': protector_id, 'type': "run", "data": { 'success': success}})
-    if(success == 0):
-        sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "stuck"} })
-        time.sleep(10)
 
-        sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "working" }})       
-        
-    
+    count = 0
+    while (count <=5 ):
+        success = random.choice([1,0])
+        # Sending data along with machine_id
+        sio.emit('protector', {'protector_id': protector_id, 'type': "run", "data": { 'success': success}})
+        if(success == 0):
+            sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "stuck"} })
+            time.sleep(10)
+
+            sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "working" }})       
+                
+            
+        time.sleep(5)
+        count+=1
+    sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "notWorking"} })
     time.sleep(5)
-
-
 # # red light
 # success = random.choice([True, False])
 # # Sending data along with machine_id
