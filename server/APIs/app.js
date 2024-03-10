@@ -2,11 +2,18 @@ const express = require("express");
 const { createServer } = require("http"); // Import only createServer from "http"
 const { Server } = require("socket.io"); // Import Server from "socket.io"
 const cors = require("cors"); // Import CORS middleware
+
 const connectToDatabase = require("../DataBaseConnection/dbConfig");
 connectToDatabase();
+const app = express();
+const port = 3002;
+app.use(express.json());
+app.use(cors());
+const gettingMachineInfo = require("../APIs/getMachineInfo");
+app.use("/", gettingMachineInfo);
+
 const Machine = require("../Models/machineModel");
 
-const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
@@ -123,4 +130,8 @@ async function machineStatusChanging(moldProtector, machineDataStatus) {
 
 httpServer.listen(3001, () => {
   console.log("Server started on port 3001");
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
