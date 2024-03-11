@@ -9,7 +9,7 @@ const app = express();
 const port = 3002;
 app.use(express.json());
 app.use(cors());
-const gettingMachineInfo = require("../APIs/getMachineInfo");
+const gettingMachineInfo = require("./getMachineInfo");
 app.use("/", gettingMachineInfo);
 
 const Machine = require("../Models/machineModel");
