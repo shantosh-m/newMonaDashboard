@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 // Define a schema for your collection
 const machineSchema = new mongoose.Schema({
-  _id: String,
   machineID: Number,
   failedShots: Number,
   moldMaker: String,

@@ -31,35 +31,6 @@ io.on("connection", (socket) => {
     console.log(`Message received from  ${msg.protector_id}: `);
     console.log(msg.data);
     console.log(msg.type);
-    // console.log(`Message received from ${msg.protector_id} ${msg.type}`);
-
-    // if msg.type == "init":
-    //     # check the database whether it has the same data.
-
-    // Define a schema for your collection
-    // const machineSchema = new mongoose.Schema({
-    //     _id: String,
-    //     machineID: Number,
-    //     moldMaker: "String",
-    //     moldMaterial: String,
-    //     moldProtector: String,
-    //     monaNumber: String,
-    //   })
-
-    // console.log(
-    //   `Failed shots received from Protector ${msg.protector_id}: ${msg.failed_shots}`
-    // );
-
-    // Store the message for the protector
-    // if (!protectorMessages[msg.protector_id]) {
-    //   protectorMessages[msg.protector_id] = ;
-    // }
-    // protectorMessages[msg.protector_id].push({
-    //   total_shots: msg.total_shots,
-    //   failed_shots: msg.failed_shots,
-    // });
-
-    // Emit the updated messages to all clients
 
     if (msg.type === "run") {
       io.emit("updated_protector_messages", msg);
@@ -68,6 +39,13 @@ io.on("connection", (socket) => {
       io.emit("updated_protector_messages", msg);
       machineStatusChanging(msg.protector_id, msg.data.status);
     } else if (msg.type === "init") {
+      machineCreating(
+        msg.data.moldProtector,
+        msg.data.machineID,
+        msg.data.moldMaker,
+        msg.data.moldMaterial,
+        msg.data.monaNumber
+      );
     } else {
       console.error("There is error occured");
     }
@@ -77,26 +55,24 @@ io.on("connection", (socket) => {
 // Function to update or insert into MongoDB
 async function updateOrInsert(moldProtector, success) {
   try {
-    const existingDocument = await Machine.findOne({ moldProtector });
+    const existingDocument = await Machine.findOne({
+      moldProtector,
+      status: { $ne: "inactive" },
+    });
 
     if (existingDocument) {
       if (success) {
-        await Machine.updateOne({ moldProtector }, { $inc: { moldShots: 1 } });
+        await Machine.updateOne(
+          { moldProtector, status: { $ne: "inactive" } },
+          { $inc: { moldShots: 1 } }
+        );
         console.log(`Updated moldShots for machine ${moldProtector}`);
       } else {
         await Machine.updateOne(
-          { moldProtector },
+          { moldProtector, status: { $ne: "inactive" } },
           { $inc: { failedShots: 1 } }
         );
         console.log(`Updated failedShots for machine ${moldProtector}`);
-      }
-    } else {
-      if (success) {
-        await Machine.create({ moldProtector, moldShots: 1 });
-        console.log(`With moldShot = 1 machine ${moldProtector} created`);
-      } else {
-        await Machine.create({ moldProtector, failedShots: 1 });
-        console.log(`With failedShot = 1 machine ${moldProtector} created`);
       }
     }
   } catch (error) {
@@ -115,13 +91,58 @@ async function update_insert_valid(moldProtector, success) {
 
 async function machineStatusChanging(moldProtector, machineDataStatus) {
   try {
-    const existingDocument = await Machine.findOne({ moldProtector });
+    const existingDocument = await Machine.findOne({
+      moldProtector,
+      status: { $ne: "inactive" },
+    });
 
     if (existingDocument) {
-      await Machine.updateOne({ moldProtector }, { status: machineDataStatus });
+      await Machine.updateOne(
+        { moldProtector, status: { $ne: "inactive" } },
+        { status: machineDataStatus }
+      );
       console.log(
         `Machine status changing for ${moldProtector} to  ${machineDataStatus}`
       );
+    }
+  } catch (error) {
+    console.error("Error on changing status:", error);
+  }
+}
+
+async function machineCreating(
+  moldProtector,
+  machineID,
+  moldMaker,
+  moldMaterial,
+  monaNumber
+) {
+  try {
+    const existingDocument = await Machine.findOne({
+      moldProtector,
+      machineID,
+      moldMaker,
+      moldMaterial,
+      monaNumber,
+      status: { $ne: "inactive" },
+    });
+
+    if (existingDocument) {
+    } else {
+      await Machine.updateOne(
+        { moldProtector, status: { $ne: "inactive" } },
+        { status: "inactive" }
+      );
+      await Machine.create({
+        moldProtector,
+        machineID,
+        moldMaker,
+        moldMaterial,
+        monaNumber,
+        failedShots: 0,
+        moldShots: 0,
+        status: "notWorking",
+      });
     }
   } catch (error) {
     console.error("Error on changing status:", error);
