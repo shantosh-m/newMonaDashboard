@@ -31,9 +31,19 @@ export const MachineProvider = ({ children }) => {
 
   const setupSocketListener = () => {
     const socket = io("http://localhost:3001");
-
+    
     socket.on("updated_protector_messages", (updatedMessages) => {
-      if (updatedMessages.type == "run")
+      console.log(updatedMessages.type, "type");
+      if (updatedMessages.type == "init")
+        setMachineData((state) => {
+          return state.map((machine) => {
+            if (machine.moldProtector == updatedMessages.protector_id) {
+                return { ...machine, moldMaterial: updatedMessages.data.moldMaterial, monaNumber: updatedMessages.data.monaNumber, status: "working" };
+                
+            } else return machine;
+          });
+      });
+      else if (updatedMessages.type == "run")
         setMachineData((state) => {
           return state.map((machine) => {
             if (machine.moldProtector == updatedMessages.protector_id) {
@@ -60,7 +70,8 @@ export const MachineProvider = ({ children }) => {
             } else return machine;
           });
         });
-
+      
+      console.log(updatedMessages.type, "type");
       console.log(updatedMessages, "up-msg");
       console.log(updatedMessages.data, "status");
 

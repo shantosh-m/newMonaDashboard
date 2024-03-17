@@ -40,12 +40,12 @@ sio.emit('protector', {
   'data': {
     'machineID': 10,
     'moldMaker': "Maker2",
-    'moldMaterial': "SAAS",
+    'moldMaterial': "ABS",
     'moldProtector': protector_id,
     'monaNumber': "M#124"
   }
 })
-time.sleep(2)
+time.sleep(10)
 
 # Sending data along with machine_id for the run type
 while True:

@@ -39,6 +39,7 @@ io.on("connection", (socket) => {
       io.emit("updated_protector_messages", msg);
       machineStatusChanging(msg.protector_id, msg.data.status);
     } else if (msg.type === "init") {
+      io.emit("updated_protector_messages", msg);
       machineCreating(
         msg.data.moldProtector,
         msg.data.machineID,
