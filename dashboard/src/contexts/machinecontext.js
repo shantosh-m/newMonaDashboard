@@ -34,15 +34,39 @@ export const MachineProvider = ({ children }) => {
     
     socket.on("updated_protector_messages", (updatedMessages) => {
       console.log(updatedMessages.type, "type");
-      if (updatedMessages.type == "init")
+      console.log(updatedMessages.protector_id, "Protector");
+      if (updatedMessages.type === "init") {
         setMachineData((state) => {
-          return state.map((machine) => {
-            if (machine.moldProtector == updatedMessages.protector_id) {
-                return { ...machine, moldMaterial: updatedMessages.data.moldMaterial, monaNumber: updatedMessages.data.monaNumber, status: "working" };
-                
-            } else return machine;
-          });
-      });
+            const existingMachine = state.find(machine => machine.moldProtector === updatedMessages.protector_id);
+            if (existingMachine) {
+                return state.map((machine) => {
+                    if (machine.moldProtector === updatedMessages.protector_id) {
+                        if (machine.moldMaterial !== updatedMessages.data.moldMaterial ||
+                            machine.moldMaker !== updatedMessages.data.moldMaker ||
+                            machine.monaNumber !== updatedMessages.data.monaNumber) {
+                            return { ...machine, moldMaterial: updatedMessages.data.moldMaterial, moldMaker: updatedMessages.data.moldMaker, monaNumber: updatedMessages.data.monaNumber, status: "working" };
+                        } else {
+                            return machine;
+                        }
+                    } else {
+                        return machine;
+                    }
+                });
+            } else {
+                const newMachine = {
+                    moldProtector: updatedMessages.protector_id,
+                    machineID: updatedMessages.data.machineID,
+                    moldMaterial: updatedMessages.data.moldMaterial,
+                    moldMaker: updatedMessages.data.moldMaker,
+                    monaNumber: updatedMessages.data.monaNumber,
+                    status: "working",
+                    moldShots: 0,
+                    failedShots: 0
+                };
+                return [...state, newMachine];
+            }
+        });
+    }
       else if (updatedMessages.type == "run")
         setMachineData((state) => {
           return state.map((machine) => {

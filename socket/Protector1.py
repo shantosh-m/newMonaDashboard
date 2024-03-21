@@ -5,7 +5,8 @@ import random
 
 # Create a Socket.IO client
 sio = socketio.Client()
-
+success_count = 0
+fail_count = 0
 # Define the event handler for the 'connect' event
 @sio.event
 def connect():
@@ -14,7 +15,10 @@ def connect():
 # Define the event handler for the 'disconnect' event
 @sio.event
 def disconnect():
-    print("Disconnected from server")
+    print("Mold shots protector1:",success_count)
+    print("failed shots protector1:",fail_count)
+    
+    
 
 # Define a custom event handler for a custom event
 @sio.event
@@ -55,7 +59,11 @@ while True:
         success = random.choice([1,0])
         # Sending data along with machine_id
         sio.emit('protector', {'protector_id': protector_id, 'type': "run", "data": { 'success': success}})
+        if(success == 1):
+            success_count+=1
+           
         if(success == 0):
+            fail_count+=1
             sio.emit('protector', {'protector_id': protector_id, 'type': "status", "data": {'status': "stuck"} })
             time.sleep(10)
 
