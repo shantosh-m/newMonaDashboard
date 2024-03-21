@@ -16,8 +16,8 @@ def connect():
 @sio.event
 def disconnect():
     # print("Disconnected from server")
-    print("Mold shots protector9: ",success_count)
-    print("failed shots protector9: ",fail_count)
+    print("Mold shots protector19: ",success_count)
+    print("failed shots protector19: ",fail_count)
 
 # Define a custom event handler for a custom event
 @sio.event
