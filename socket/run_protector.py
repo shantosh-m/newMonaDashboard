@@ -24,7 +24,7 @@ def stop_program():
 if __name__ == "__main__":
     processes = []
 
-    for i in range(1, 16):
+    for i in range(1, 21):
         protector_id = int(i)
         process = multiprocessing.Process(target=run_protector, args=(protector_id,))
         processes.append(process)

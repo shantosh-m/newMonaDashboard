@@ -44,7 +44,9 @@ export const MachineProvider = ({ children }) => {
                         if (machine.moldMaterial !== updatedMessages.data.moldMaterial ||
                             machine.moldMaker !== updatedMessages.data.moldMaker ||
                             machine.monaNumber !== updatedMessages.data.monaNumber) {
-                            return { ...machine, moldMaterial: updatedMessages.data.moldMaterial, moldMaker: updatedMessages.data.moldMaker, monaNumber: updatedMessages.data.monaNumber, status: "working" };
+                            return { ...machine, moldMaterial: updatedMessages.data.moldMaterial, moldMaker: updatedMessages.data.moldMaker, monaNumber: updatedMessages.data.monaNumber, status: "working",
+                            moldShots: 0,
+                            failedShots: 0 };
                         } else {
                             return machine;
                         }
