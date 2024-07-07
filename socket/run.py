@@ -1,6 +1,9 @@
 import importlib
 import multiprocessing
 import time
+import sys
+
+import os
 
 def run_protector(protector_id):
     try:
@@ -11,6 +14,8 @@ def run_protector(protector_id):
 
 if __name__ == "__main__":
     processes = []
+    sys.path.append(os.getcwd())
+    print("current path",os.getcwd())
 
     while True:
         protector_id_input = input("Enter protector ID to run (or 'q' to quit): ")

@@ -30,7 +30,6 @@ sio.connect('http://localhost:3001')  # Replace with your server's address
 
 
 
-
 protector_id = "Protector1"  # Unique identifier for the machine
 
 # for the first time data entry --> config 

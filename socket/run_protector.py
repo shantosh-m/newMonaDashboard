@@ -1,40 +1,116 @@
-import importlib
-import multiprocessing
+import socketio
 import time
+import random
+import multiprocessing
 
-# Global flag to indicate whether the processes should continue running
-running_flag = multiprocessing.Value('i', 1)  # 'i' for integer, initialized to 1 (True)
+class MoldProtector:
+    def __init__(self, protector_id, server_url):
+        self.protector_id = protector_id
+        self.server_url = server_url
+        self.success_count = 0
+        self.fail_count = 0
+        self.sio = None
 
-def run_protector(protector_id):
-    try:
-        protector_module = importlib.import_module(f'Protector{protector_id}')
-        while running_flag.value:
-            protector_module.run()
-            time.sleep(1)  # Adjust as needed
-    except ImportError:
-        print(f"Protector{protector_id}.py not found.")
-    except KeyboardInterrupt:
-        pass  # Handle KeyboardInterrupt gracefully
+    def connect_to_server(self):
+        self.sio = socketio.Client()
 
+        # Define the event handler for the 'connect' event
+        @self.sio.event
+        def connect():
+            print(f"Connected to server for {self.protector_id}")
 
-def stop_program():
-    global running_flag
-    running_flag.value = 0
+        # Define the event handler for the 'disconnect' event
+        @self.sio.event
+        def disconnect():
+            print(f"Mold shots {self.protector_id}: {self.success_count}")
+            print(f"Failed shots {self.protector_id}: {self.fail_count}")
+
+        # Define a custom event handler for a custom event
+        @self.sio.event
+        def custom_event(data):
+            print(f"Custom event received for {self.protector_id}: {data}")
+
+        try:
+            self.sio.connect(self.server_url)
+            self.initialize_protector()
+        except socketio.exceptions.ConnectionError as e:
+            print(f"Connection error for {self.protector_id}: {e}")
+            time.sleep(5)
+            self.connect_to_server()
+
+    def initialize_protector(self):
+        # Sending data along with machine_id for the init type
+        self.sio.emit('protector', {
+            'protector_id': self.protector_id,
+            'type': "init",
+            'data': {
+                'machineID': 1,
+                'moldMaker': "Maker1",
+                'moldMaterial': "GPPS",
+                'moldProtector': self.protector_id,
+                'monaNumber': "M#123"
+            }
+        })
+        time.sleep(2)
+
+    def run(self):
+        self.connect_to_server()
+
+        # Sending data along with machine_id for the run type
+        while True:
+            count = 0
+            while count <= 5:
+                success = random.choice([1, 0])
+                # Sending data along with machine_id
+                self.sio.emit('protector', {
+                    'protector_id': self.protector_id,
+                    'type': "run",
+                    'data': {
+                        'success': success
+                    }
+                })
+                if success == 1:
+                    self.success_count += 1
+                else:
+                    self.fail_count += 1
+                    self.sio.emit('protector', {
+                        'protector_id': self.protector_id,
+                        'type': "status",
+                        'data': {
+                            'status': "stuck"
+                        }
+                    })
+                    time.sleep(10)
+                    self.sio.emit('protector', {
+                        'protector_id': self.protector_id,
+                        'type': "status",
+                        'data': {
+                            'status': "working"
+                        }
+                    })
+                time.sleep(5)
+                count += 1
+            self.sio.emit('protector', {
+                'protector_id': self.protector_id,
+                'type': "status",
+                'data': {
+                    'status': "notWorking"
+                }
+            })
+            time.sleep(5)
+
+def start_protector(protector_id, server_url):
+    protector = MoldProtector(protector_id, server_url)
+    protector.run()
 
 if __name__ == "__main__":
-    processes = []
+    server_url = 'http://localhost:3001'
 
-    for i in range(1, 21):
-        protector_id = int(i)
-        process = multiprocessing.Process(target=run_protector, args=(protector_id,))
-        processes.append(process)
-        process.start()
-
-    # Wait for some time (for demonstration purposes)
-    time.sleep(10)  # You can adjust this
-
-    # Stop the program after waiting
-    stop_program()
-
-    for process in processes:
-        process.join()
+    process1 = multiprocessing.Process(target=start_protector, args=("Protector1", server_url))
+    process2 = multiprocessing.Process(target=start_protector, args=("Protector2", server_url))
+    
+    process1.start()
+    process2.start()
+    
+    process1.join()
+    process2.join()
