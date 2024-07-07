@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connectToDatabase = () => {
   mongoose.connect(
-    "mongodb+srv://moldprotector:shantosh@moldprotector.3dhwcjm.mongodb.net/MoldProtector",
+    "mongodb+srv://Shantosh:Shantosh@cluster0.vljtvi4.mongodb.net/MoldProtector",
 
     {
       //   useNewUrlParser: true,
